@@ -69,8 +69,8 @@ export const AuthProvider = ({ children }) => {
     setLoading(true);
     try {
       const data = await authAPI.login(credentials);
-      if (data.token) {
-        localStorage.setItem("token", data.token);
+      if (data.access_token) {
+        localStorage.setItem("token", data.access_token);
         setUser(data.user);
         toast({
           title: "Success",
@@ -79,7 +79,7 @@ export const AuthProvider = ({ children }) => {
         });
         router.push("/dashboard");
       } else {
-        throw new Error("No token received from server");
+        throw new Error("Login successful but no access token received");
       }
       return data;
     } catch (error) {
