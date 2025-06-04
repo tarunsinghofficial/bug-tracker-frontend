@@ -59,73 +59,69 @@ const Sidebar = () => {
 
   return (
     <div
-      className={`h-screen border-r bg-background transition-all duration-300 relative hidden md:block ${
+      className={`h-screen border-r transition-all duration-300 ${
         isCollapsed ? "w-16" : "w-64"
-      }`}
+      } flex flex-col bg-background`}
     >
-      <div className="p-2 flex flex-col h-[90%] justify-between">
+      {/* Collapse Button */}
+      <div className="p-4 border-b flex items-center justify-between">
+        {!isCollapsed && <span className="text-lg font-bold">Bug Tracker</span>}
         <Button
-          variant="outline"
+          variant="ghost"
           size="icon"
-          className="absolute right-[-12px] top-4 h-6 w-6 rounded-full border bg-background"
           onClick={() => setIsCollapsed(!isCollapsed)}
         >
           {isCollapsed ? (
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-5 w-5" />
           ) : (
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="h-5 w-5" />
           )}
-          <span className="sr-only">Toggle Sidebar</span>
         </Button>
+      </div>
 
-        <div className="flex flex-col h-full">
-          <div className="space-y-4 py-4">
-            <div className="px-3 py-2">
-              <div className="flex h-8 items-center justify-center">
-                {!isCollapsed && (
-                  <h2 className="text-lg font-semibold tracking-tight">
-                    Bug Tracker
-                  </h2>
-                )}
-                {isCollapsed && <BugOff className="h-6 w-6" />}
-              </div>
-            </div>
-            <div className="px-3 py-2">
-              <div className="space-y-1">
-                {sidebarItems.map((item) => (
-                  <Link key={item.href} href={item.href}>
-                    <Button
-                      variant="ghost"
-                      size={isCollapsed ? "icon" : "default"}
-                      className={`w-full justify-${
-                        isCollapsed ? "center" : "start"
-                      } ${
-                        pathname === item.href
-                          ? "bg-primary/10 text-primary hover:bg-primary/20"
-                          : "hover:bg-muted hover:text-foreground"
-                      }`}
-                    >
-                      {item.icon}
-                      {!isCollapsed && (
-                        <span className="ml-2">{item.name}</span>
-                      )}
-                    </Button>
-                  </Link>
-                ))}
-              </div>
-            </div>
+      {/* User Info (visible when not collapsed and authenticated) */}
+      {!isCollapsed && user && (
+        <div className="p-4 border-b">
+          <div className="font-medium">{user.username}</div>
+          <div className="text-sm text-muted-foreground">{user.email}</div>
+          <div className="text-sm text-muted-foreground">{user.role}</div>
+        </div>
+      )}
+
+      {/* Navigation Links */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="px-3 py-2">
+          <div className="space-y-1">
+            {sidebarItems.map((item) => (
+              <Link key={item.href} href={item.href}>
+                <Button
+                  variant="ghost"
+                  size={isCollapsed ? "icon" : "default"}
+                  className={`w-full justify-${
+                    isCollapsed ? "center" : "start"
+                  } ${
+                    pathname === item.href
+                      ? "bg-primary/10 text-primary hover:bg-primary/20"
+                      : "hover:bg-muted hover:text-foreground"
+                  }`}
+                >
+                  {item.icon}
+                  {!isCollapsed && <span className="ml-2">{item.name}</span>}
+                </Button>
+              </Link>
+            ))}
           </div>
-          {/* Logout button */}
-          <div className="p-4 border-t mt-auto">
-            <Button
-              variant="outline"
-              className="w-full justify-start text-muted-foreground hover:text-red-500 hover:border-red-200"
-              onClick={handleLogout}
-            >
-              <LogOut size={18} className="mr-3" />
-              Logout
-            </Button>
-          </div>
+        </div>
+        {/* Logout button */}
+        <div className="p-4 border-t mt-auto">
+          <Button
+            variant="outline"
+            className="w-full justify-start text-muted-foreground hover:text-red-500 hover:border-red-200"
+            onClick={handleLogout}
+          >
+            <LogOut size={18} className="mr-3" />
+            Logout
+          </Button>
         </div>
       </div>
     </div>

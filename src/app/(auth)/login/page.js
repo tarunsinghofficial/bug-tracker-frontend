@@ -51,6 +51,9 @@ const Login = () => {
       password: "",
     },
   });
+
+  const { isSubmitting } = form.formState;
+
   async function onSubmit(values) {
     try {
       await login({
@@ -150,8 +153,12 @@ const Login = () => {
                     </FormItem>
                   )}
                 />
-                <Button type="submit" className="w-full">
-                  Sign In
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Signing In..." : "Sign In"}
                 </Button>
               </form>
             </Form>

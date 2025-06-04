@@ -21,15 +21,25 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={roboto.className}>
+      <body className={`${roboto.variable}`}>
         <AuthProvider>
-          <div className="min-h-screen flex flex-col">
-            <Navbar />
-            <div className="flex flex-1">
-              <Sidebar />
-              <main className="flex-1 p-4 md:p-6">{children}</main>
+          <div className="flex h-screen overflow-hidden">
+            {/* Fixed Navbar at top */}
+            <div className="fixed top-0 left-0 right-0 z-50">
+              <Navbar />
             </div>
-            <Footer />
+
+            {/* Fixed Sidebar */}
+            <div className="fixed top-16 left-0 bottom-0 z-40 overflow-y-auto">
+              <Sidebar />
+            </div>
+
+            {/* Main content area - scrollable */}
+            <div className="flex flex-col w-full pt-16">
+              <main className="flex-1 ml-64 p-4 md:p-6 overflow-y-auto h-[calc(100vh-64px)]">
+                {children}
+              </main>
+            </div>
           </div>
           <Toaster />
         </AuthProvider>

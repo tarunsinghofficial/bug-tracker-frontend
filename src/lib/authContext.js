@@ -26,9 +26,15 @@ export const AuthProvider = ({ children }) => {
         console.error("Auth check failed:", error);
         localStorage.removeItem("token");
         setUser(null);
+        const errorMsg =
+          error.message || "Session Expired. Please log in again.";
+        const detailedError =
+          error.message && error.message.detail
+            ? error.message.detail
+            : errorMsg;
         toast({
           title: "Session Expired",
-          description: "Please log in again",
+          description: detailedError,
           variant: "destructive",
         });
       } finally {
@@ -51,12 +57,15 @@ export const AuthProvider = ({ children }) => {
       router.push("/login");
       return data;
     } catch (error) {
+      console.error("Registration error:", error);
       const errorMsg =
         error.message || "Registration failed. Please try again.";
-      setError(errorMsg);
+      const detailedError =
+        error.message && error.message.detail ? error.message.detail : errorMsg;
+      setError(detailedError);
       toast({
         title: "Registration Failed",
-        description: errorMsg,
+        description: detailedError,
         variant: "destructive",
       });
       throw error;
@@ -83,12 +92,15 @@ export const AuthProvider = ({ children }) => {
       }
       return data;
     } catch (error) {
+      console.error("Login error:", error);
       const errorMsg =
         error.message || "Login failed. Please check your credentials.";
-      setError(errorMsg);
+      const detailedError =
+        error.message && error.message.detail ? error.message.detail : errorMsg;
+      setError(detailedError);
       toast({
         title: "Login Failed",
-        description: errorMsg,
+        description: detailedError,
         variant: "destructive",
       });
       throw error;

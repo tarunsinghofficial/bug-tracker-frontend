@@ -61,6 +61,9 @@ const Register = () => {
       password: "",
     },
   });
+
+  const { isSubmitting } = form.formState;
+
   async function onSubmit(values) {
     try {
       await registerUser({
@@ -197,8 +200,12 @@ const Register = () => {
                     </FormItem>
                   )}
                 />
-                <Button type="submit" className="w-full">
-                  Register
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Registering..." : "Register"}
                 </Button>
               </form>
             </Form>

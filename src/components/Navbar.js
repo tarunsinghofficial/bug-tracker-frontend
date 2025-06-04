@@ -86,37 +86,34 @@ const Navbar = () => {
             </NavigationMenuList>
           </NavigationMenu>
 
-          <div className="flex items-center gap-2">
-            {isAuthenticated ? (
-              <>
-                <div className="flex items-center mr-2">
-                  <Avatar className="h-8 w-8 mr-2">
-                    <AvatarFallback>
-                      {getInitials(user?.username)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="text-sm">
-                    <p className="font-medium">{user?.username}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {user?.role || "User"}
-                    </p>
-                  </div>
+          {/* Auth Buttons or User Info */}
+          {isAuthenticated ? (
+            <>
+              <div className="flex items-center mr-2">
+                <Avatar className="h-8 w-8 mr-2">
+                  <AvatarFallback>{getInitials(user?.username)}</AvatarFallback>
+                </Avatar>
+                <div className="text-sm">
+                  <p className="font-medium">{user?.username}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {user?.role || "User"}
+                  </p>
                 </div>
-                <Button variant="outline" onClick={handleLogout}>
-                  Logout
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button variant="outline" onClick={() => router.push("/login")}>
-                  Login
-                </Button>
-                <Button>
-                  <Link href="/register">Register</Link>
-                </Button>
-              </>
-            )}
-          </div>
+              </div>
+              <Button variant="outline" onClick={handleLogout}>
+                Logout
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button variant="outline" onClick={() => router.push("/login")}>
+                Login
+              </Button>
+              <Button>
+                <Link href="/register">Register</Link>
+              </Button>
+            </>
+          )}
         </div>
 
         {/* Mobile Navigation */}
@@ -141,7 +138,7 @@ const Navbar = () => {
                 </div>
               </div>
             )}
-            <div className="flex flex-col gap-4 mt-8">
+            <div className="grid gap-2 py-4">
               <Link href="/" className="px-3 py-2 text-sm font-medium">
                 Home
               </Link>
