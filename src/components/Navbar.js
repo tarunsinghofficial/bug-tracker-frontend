@@ -61,13 +61,6 @@ const Navbar = () => {
               {isAuthenticated && (
                 <>
                   <NavigationMenuItem>
-                    <Link href="/dashboard" legacyBehavior passHref>
-                      <NavigationMenuLink className="px-3 py-2 text-sm font-medium">
-                        Dashboard
-                      </NavigationMenuLink>
-                    </Link>
-                  </NavigationMenuItem>
-                  <NavigationMenuItem>
                     <Link href="/projects" legacyBehavior passHref>
                       <NavigationMenuLink className="px-3 py-2 text-sm font-medium">
                         Projects
@@ -75,9 +68,9 @@ const Navbar = () => {
                     </Link>
                   </NavigationMenuItem>
                   <NavigationMenuItem>
-                    <Link href="/bugs" legacyBehavior passHref>
+                    <Link href="/issues" legacyBehavior passHref>
                       <NavigationMenuLink className="px-3 py-2 text-sm font-medium">
-                        Bugs
+                        Issues
                       </NavigationMenuLink>
                     </Link>
                   </NavigationMenuItem>
@@ -93,10 +86,10 @@ const Navbar = () => {
                 <Avatar className="h-8 w-8 mr-2">
                   <AvatarFallback>{getInitials(user?.username)}</AvatarFallback>
                 </Avatar>
-                <div className="text-sm">
+                <div className="text-sm flex  items-center gap-1">
                   <p className="font-medium">{user?.username}</p>
                   <p className="text-xs text-muted-foreground">
-                    {user?.role || "User"}
+                    ({user?.role || "User"})
                   </p>
                 </div>
               </div>

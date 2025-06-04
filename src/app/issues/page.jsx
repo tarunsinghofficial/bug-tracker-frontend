@@ -6,6 +6,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -30,7 +31,14 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { User, Calendar, AlertCircle, CheckCircle, Clock } from "lucide-react";
+import {
+  User,
+  Calendar,
+  AlertCircle,
+  CheckCircle,
+  Clock,
+  Folder,
+} from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const Issues = () => {
@@ -559,13 +567,16 @@ const Issues = () => {
     };
 
     return (
-      <Card className="hover:shadow-md transition-shadow">
-        <CardHeader className="pb-3">
-          <div className="flex justify-between items-start">
-            <CardTitle className="text-lg font-semibold line-clamp-2">
-              {issue.title}
-            </CardTitle>
-            <div className="flex gap-2 flex-wrap">
+      <Card className="hover:shadow-md transition-shadow flex flex-col justify-between">
+        <CardHeader>
+          <div className="text-xs flex items-center justify-between mb-2">
+            {issue.project_title && (
+              <div className="flex items-center gap-1">
+                <Folder className="w-4 h-4" />
+                <span>{issue.project_title}</span>
+              </div>
+            )}
+            <div className="flex gap-2 flex-wrap justify-end">
               <Badge className={priorityConfig[issue.priority]?.color}>
                 <PriorityIcon className="w-3 h-3 mr-1" />
                 {issue.priority}
@@ -575,38 +586,42 @@ const Issues = () => {
               </Badge>
             </div>
           </div>
+          <div className="flex flex-col justify-between items-start">
+            <CardTitle className="text-lg font-semibold line-clamp-2">
+              {issue.title}
+            </CardTitle>
+            <CardDescription className="line-clamp-3">
+              {issue.description}
+            </CardDescription>
+          </div>
         </CardHeader>
-        <CardContent className="space-y-3">
-          <CardDescription className="line-clamp-3">
-            {issue.description}
-          </CardDescription>
-          <div className="flex flex-wrap gap-2 text-sm text-gray-600">
+        <CardContent className="space-y-1">
+          <div className="flex items-center justify-between gap-2 text-sm text-gray-600">
             <div className="flex items-center gap-1">
-              {/* Status Badge or Select based on permissions */}
               {canChangeStatus ? (
-                <Select value={issue.status} onValueChange={handleStatusChange}>
-                  {" "}
-                  {/* Use issue.status as value */}
-                  <SelectTrigger className="h-6 px-2 py-0 text-xs">
-                    {" "}
-                    {/* Smaller trigger */}
-                    <SelectValue placeholder="Change Status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {" "}
-                    {/* Options based on allowedStatuses */}
-                    {allowedStatuses.map((statusKey) => (
-                      <SelectItem key={statusKey} value={statusKey}>
-                        {" "}
-                        {/* Use statusKey as value and key */}
-                        {statusConfig[statusKey]?.label ||
-                          statusKey.replace(/_/g, " ")}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="flex items-center gap-2">
+                  <span className="font-medium text-xs">Change Status:</span>
+                  <Select
+                    value={issue.status}
+                    onValueChange={handleStatusChange}
+                  >
+                    <SelectTrigger className="h-6 px-2 py-0 text-xs">
+                      <SelectValue
+                        placeholder="Change Status"
+                        className="text-black"
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {allowedStatuses.map((statusKey) => (
+                        <SelectItem key={statusKey} value={statusKey}>
+                          {statusConfig[statusKey]?.label ||
+                            statusKey.replace(/_/g, " ")}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               ) : (
-                // Render static badge if status cannot be changed by this user
                 <Badge
                   variant="outline"
                   className={statusConfig[issue.status]?.color}
@@ -616,11 +631,9 @@ const Issues = () => {
                 </Badge>
               )}
             </div>
-
-            {/* Show current status like open, close, inrevieww, etc */}
             {showIssueStatus && (
               <div className="flex items-center gap-1">
-                <span className="font-medium">Status:</span>
+                <span className="font-medium text-xs">Status:</span>
                 <Badge
                   variant="outline"
                   className={statusConfig[issue.status]?.color}
@@ -630,50 +643,51 @@ const Issues = () => {
                 </Badge>
               </div>
             )}
-            {issue.project_title && (
-              <div className="flex items-center gap-1">
-                <span className="font-medium">Project:</span>
-                <span>{issue.project_title}</span>
-              </div>
-            )}
-
-            {issue.assigned_to_id && (
-              <div className="flex items-center gap-1">
+          </div>
+        </CardContent>
+        <CardFooter className="flex justify-between items-end">
+          <div className="text-sm flex flex-col gap-1">
+            {showAssignButton &&
+              issue.status !== "COMPLETED" &&
+              issue.status !== "REVIEW" && (
+                <div className="pt-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => openAssignDialog(issue)}
+                  >
+                    Assign Issue
+                  </Button>
+                </div>
+              )}
+            {issue.assigned_to_id ? (
+              <div className="text-sm flex items-center gap-1">
                 <User className="w-4 h-4" />
-                <span>
-                  Assigned to: {issue.assignee_name || issue.assigned_to_id}
-                </span>
+                <span>{issue.assignee_name}</span>
+              </div>
+            ) : (
+              <div className="text-sm flex items-center gap-1">
+                <User className="w-4 h-4" />
+                <span>Not Assigned</span>
               </div>
             )}
-
+          </div>
+          <div className="flex gap-1 flex-col items-end">
             {issue.created_by_id && (
-              <div className="flex items-center gap-1">
+              <div className="text-xs flex items-center gap-1">
                 <span className="font-medium">Created by:</span>
                 <span>{issue.creator_name || issue.created_by_id}</span>
               </div>
             )}
-
             {issue.created_at && (
-              <div className="flex items-center gap-1">
-                <Calendar className="w-4 h-4" />
-                <span>{new Date(issue.created_at).toLocaleDateString()}</span>
+              <div className="text-xs flex items-center gap-1">
+                <span className="italic text-gray-500">
+                  on {new Date(issue.created_at).toLocaleDateString()}
+                </span>
               </div>
             )}
-          </div>{" "}
-          {showAssignButton &&
-            issue.status !== "COMPLETED" &&
-            issue.status !== "REVIEW" && (
-              <div className="pt-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => openAssignDialog(issue)}
-                >
-                  Assign Issue
-                </Button>
-              </div>
-            )}
-        </CardContent>
+          </div>
+        </CardFooter>
       </Card>
     );
   };

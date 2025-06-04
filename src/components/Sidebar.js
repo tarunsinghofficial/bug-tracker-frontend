@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/lib/authContext";
 import { useToast } from "@/hooks/use-toast";
+import { Avatar, AvatarFallback } from "./ui/avatar";
 
 const Sidebar = () => {
   const pathname = usePathname();
@@ -50,11 +51,6 @@ const Sidebar = () => {
       href: "/issues",
       icon: <BugOff className="h-5 w-5" />,
     },
-    {
-      name: "Settings",
-      href: "/settings",
-      icon: <Settings className="h-5 w-5" />,
-    },
   ];
 
   return (
@@ -78,15 +74,6 @@ const Sidebar = () => {
           )}
         </Button>
       </div>
-
-      {/* User Info (visible when not collapsed and authenticated) */}
-      {!isCollapsed && user && (
-        <div className="p-4 border-b">
-          <div className="font-medium">{user.username}</div>
-          <div className="text-sm text-muted-foreground">{user.email}</div>
-          <div className="text-sm text-muted-foreground">{user.role}</div>
-        </div>
-      )}
 
       {/* Navigation Links */}
       <div className="flex-1 overflow-y-auto">
@@ -112,8 +99,23 @@ const Sidebar = () => {
             ))}
           </div>
         </div>
-        {/* Logout button */}
-        <div className="p-4 border-t mt-auto">
+        {/* User Info */}
+        <div className="p-4 border-t mt-auto space-y-3">
+          {!isCollapsed && user && (
+            <div className="p-4 flex items-center gap-2 hover:bg-muted hover:cursor-pointer rounded-md">
+              <Avatar className="h-8 w-8 mr-2">
+                <AvatarFallback>
+                  {user.username.charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <div className="text-xs font-medium">{user.username}</div>
+                <div className="text-xs text-muted-foreground">
+                  {user.email} ({user.role})
+                </div>
+              </div>
+            </div>
+          )}
           <Button
             variant="outline"
             className="w-full justify-start text-muted-foreground hover:text-red-500 hover:border-red-200"
