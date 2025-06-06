@@ -35,6 +35,8 @@ import {
   Activity,
 } from "lucide-react";
 
+import ProtectedRoute from "@/components/ProtectedRoute";
+
 const Projects = () => {
   const [allProjects, setAllProjects] = useState([]);
   const [myProjects, setMyProjects] = useState([]);
@@ -309,132 +311,134 @@ const Projects = () => {
   };
 
   return (
-    <div className="container mx-auto flex flex-col space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-3xl font-bold text-black">Projects</h2>
-        {user && (
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button>Create Project</Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>Create New Project</DialogTitle>
-                <DialogDescription>
-                  Fill in the details to create a new project.
-                </DialogDescription>
-              </DialogHeader>
-              <form onSubmit={handleSubmit}>
-                <div className="grid gap-4 py-4">
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="title" className="text-right">
-                      Title *
-                    </Label>
-                    <Input
-                      id="title"
-                      name="title"
-                      value={formData.title}
-                      onChange={handleInputChange}
-                      className="col-span-3"
-                      placeholder="Enter project title"
-                      required
-                    />
-                  </div>
-                  <div className="grid grid-cols-4 items-start gap-4">
-                    <Label htmlFor="description" className="text-right mt-2">
-                      Description
-                    </Label>
-                    <Textarea
-                      id="description"
-                      name="description"
-                      value={formData.description}
-                      onChange={handleInputChange}
-                      className="col-span-3"
-                      placeholder="Enter project description"
-                      rows={3}
-                    />
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="is_active" className="text-right">
-                      Active
-                    </Label>
-                    <div className="col-span-3 flex items-center space-x-2">
-                      <Checkbox
-                        id="is_active"
-                        checked={formData.is_active}
-                        onCheckedChange={handleActiveChange}
-                      />
-                      <Label htmlFor="is_active" className="text-sm">
-                        Project is active
+    <ProtectedRoute>
+      <div className="container mx-auto flex flex-col space-y-6">
+        <div className="flex justify-between items-center">
+          <h2 className="text-3xl font-bold text-black">Projects</h2>
+          {user && (
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button>Create Project</Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Create New Project</DialogTitle>
+                  <DialogDescription>
+                    Fill in the details to create a new project.
+                  </DialogDescription>
+                </DialogHeader>
+                <form onSubmit={handleSubmit}>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="title" className="text-right">
+                        Title *
                       </Label>
+                      <Input
+                        id="title"
+                        name="title"
+                        value={formData.title}
+                        onChange={handleInputChange}
+                        className="col-span-3"
+                        placeholder="Enter project title"
+                        required
+                      />
+                    </div>
+                    <div className="grid grid-cols-4 items-start gap-4">
+                      <Label htmlFor="description" className="text-right mt-2">
+                        Description
+                      </Label>
+                      <Textarea
+                        id="description"
+                        name="description"
+                        value={formData.description}
+                        onChange={handleInputChange}
+                        className="col-span-3"
+                        placeholder="Enter project description"
+                        rows={3}
+                      />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="is_active" className="text-right">
+                        Active
+                      </Label>
+                      <div className="col-span-3 flex items-center space-x-2">
+                        <Checkbox
+                          id="is_active"
+                          checked={formData.is_active}
+                          onCheckedChange={handleActiveChange}
+                        />
+                        <Label htmlFor="is_active" className="text-sm">
+                          Project is active
+                        </Label>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <DialogFooter>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => {
-                      setIsDialogOpen(false);
-                      resetForm();
-                    }}
-                    disabled={isCreating}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    type="submit"
-                    disabled={isCreating || !formData.title.trim()}
-                  >
-                    {isCreating ? "Creating..." : "Create Project"}
-                  </Button>
-                </DialogFooter>
-              </form>
-            </DialogContent>
-          </Dialog>
-        )}
+                  <DialogFooter>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        setIsDialogOpen(false);
+                        resetForm();
+                      }}
+                      disabled={isCreating}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      type="submit"
+                      disabled={isCreating || !formData.title.trim()}
+                    >
+                      {isCreating ? "Creating..." : "Create Project"}
+                    </Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
+          )}
+        </div>
+
+        {/* Projects Tabs */}
+        <Tabs defaultValue="all" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="all">
+              All Projects ({allProjects.length})
+            </TabsTrigger>
+            <TabsTrigger value="my">
+              My Projects ({myProjects.length})
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="all" className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {allProjects.map((project) => (
+                <ProjectCard key={project.id} project={project} />
+              ))}
+            </div>
+            {allProjects.length === 0 && (
+              <div className="text-center py-8 text-gray-500">
+                <FolderOpen className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                <p>No projects found. Create your first project!</p>
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="my" className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {myProjects.map((project) => (
+                <ProjectCard key={project.id} project={project} />
+              ))}
+            </div>
+            {myProjects.length === 0 && (
+              <div className="text-center py-8 text-gray-500">
+                <User className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                <p>No projects assigned to you as Project Manager yet.</p>
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
       </div>
-
-      {/* Projects Tabs */}
-      <Tabs defaultValue="all" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="all">
-            All Projects ({allProjects.length})
-          </TabsTrigger>
-          <TabsTrigger value="my">
-            My Projects ({myProjects.length})
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="all" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {allProjects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
-            ))}
-          </div>
-          {allProjects.length === 0 && (
-            <div className="text-center py-8 text-gray-500">
-              <FolderOpen className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-              <p>No projects found. Create your first project!</p>
-            </div>
-          )}
-        </TabsContent>
-
-        <TabsContent value="my" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {myProjects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
-            ))}
-          </div>
-          {myProjects.length === 0 && (
-            <div className="text-center py-8 text-gray-500">
-              <User className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-              <p>No projects assigned to you as Project Manager yet.</p>
-            </div>
-          )}
-        </TabsContent>
-      </Tabs>
-    </div>
+    </ProtectedRoute>
   );
 };
 

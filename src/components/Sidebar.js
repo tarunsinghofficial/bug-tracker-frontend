@@ -43,12 +43,12 @@ const Sidebar = () => {
     },
     {
       name: "Projects",
-      href: "/projects",
+      href: "/dashboard/projects",
       icon: <Folder className="h-5 w-5" />,
     },
     {
       name: "Issues",
-      href: "/issues",
+      href: "/dashboard/issues",
       icon: <BugOff className="h-5 w-5" />,
     },
   ];
@@ -61,7 +61,7 @@ const Sidebar = () => {
     >
       {/* Collapse Button */}
       <div className="p-4 border-b flex items-center justify-between">
-        {!isCollapsed && <span className="text-lg font-bold">Bug Tracker</span>}
+        {!isCollapsed && <span className="text-lg font-bold">ProjectSync</span>}
         <Button
           variant="ghost"
           size="icon"

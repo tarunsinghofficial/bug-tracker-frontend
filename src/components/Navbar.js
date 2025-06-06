@@ -43,7 +43,7 @@ const Navbar = () => {
     <nav className="border-b bg-background">
       <div className="container flex h-16 items-center justify-between px-4 md:px-6">
         <Link href="/" className="text-xl font-bold">
-          Bug Tracker
+          ProjectSync
         </Link>
 
         {/* Desktop Navigation */}
@@ -61,14 +61,14 @@ const Navbar = () => {
               {isAuthenticated && (
                 <>
                   <NavigationMenuItem>
-                    <Link href="/projects" legacyBehavior passHref>
+                    <Link href="/dashboard/projects" legacyBehavior passHref>
                       <NavigationMenuLink className="px-3 py-2 text-sm font-medium">
                         Projects
                       </NavigationMenuLink>
                     </Link>
                   </NavigationMenuItem>
                   <NavigationMenuItem>
-                    <Link href="/issues" legacyBehavior passHref>
+                    <Link href="/dashboard/issues" legacyBehavior passHref>
                       <NavigationMenuLink className="px-3 py-2 text-sm font-medium">
                         Issues
                       </NavigationMenuLink>
@@ -145,12 +145,15 @@ const Navbar = () => {
                     Dashboard
                   </Link>
                   <Link
-                    href="/projects"
+                    href="/dashboard/projects"
                     className="px-3 py-2 text-sm font-medium"
                   >
                     Projects
                   </Link>
-                  <Link href="/bugs" className="px-3 py-2 text-sm font-medium">
+                  <Link
+                    href="/dashboard/issues"
+                    className="px-3 py-2 text-sm font-medium"
+                  >
                     Bugs
                   </Link>
                 </>

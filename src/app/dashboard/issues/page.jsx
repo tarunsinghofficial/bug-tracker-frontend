@@ -40,6 +40,7 @@ import {
   Folder,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 const Issues = () => {
   const [allIssues, setAllIssues] = useState([]);
@@ -759,236 +760,93 @@ const Issues = () => {
   };
 
   return (
-    <div className="container mx-auto flex flex-col space-y-6">
-      <div className="flex flex-wrap justify-between items-center gap-2">
-        <h2 className="text-3xl font-bold text-black">Issues</h2>
-        <div className="flex flex-wrap gap-2 items-center">
-          {/* Filter button with dropdown */}
-          <div className="relative">
-            {" "}
-            <Button
-              variant="outline"
-              onClick={() => setIsFilterMenuOpen((prev) => !prev)}
-              className="flex items-center gap-2"
-            >
-              <span>Filters</span>
-              {(filters.status !== "all_statuses" ||
-                filters.priority !== "all_priorities" ||
-                filters.type !== "all_types" ||
-                filters.assignedTo !== "any_user") && (
-                <Badge variant="secondary" className="ml-1">
-                  {
-                    [
-                      filters.status !== "all_statuses",
-                      filters.priority !== "all_priorities",
-                      filters.type !== "all_types",
-                      filters.assignedTo !== "any_user",
-                    ].filter(Boolean).length
-                  }
-                </Badge>
-              )}
-            </Button>
-            {isFilterMenuOpen && (
-              <div className="absolute right-0 mt-2 w-72 bg-white shadow-lg rounded-md border border-gray-200 p-4 z-50">
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <h4 className="font-medium">Filter Issues</h4>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={resetFilters}
-                      className="h-7 text-xs"
-                    >
-                      Reset
-                    </Button>
-                  </div>
-
-                  {/* Status Filter */}
-                  <div className="space-y-2">
-                    <Label>Status</Label>
-                    <Select
-                      value={filters.status}
-                      onValueChange={(value) =>
-                        handleFilterChange("status", value)
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="All Statuses" />
-                      </SelectTrigger>{" "}
-                      <SelectContent>
-                        <SelectItem value="all_statuses">
-                          All Statuses
-                        </SelectItem>
-                        {Object.keys(statusConfig).map((status) => (
-                          <SelectItem key={status} value={status}>
-                            {statusConfig[status]?.label ||
-                              status.replace(/_/g, " ")}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/* Priority Filter */}
-                  <div className="space-y-2">
-                    <Label>Priority</Label>
-                    <Select
-                      value={filters.priority}
-                      onValueChange={(value) =>
-                        handleFilterChange("priority", value)
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="All Priorities" />
-                      </SelectTrigger>{" "}
-                      <SelectContent>
-                        <SelectItem value="all_priorities">
-                          All Priorities
-                        </SelectItem>
-                        <SelectItem value="LOW">Low</SelectItem>
-                        <SelectItem value="MEDIUM">Medium</SelectItem>
-                        <SelectItem value="HIGH">High</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/* Type Filter */}
-                  <div className="space-y-2">
-                    <Label>Type</Label>
-                    <Select
-                      value={filters.type}
-                      onValueChange={(value) =>
-                        handleFilterChange("type", value)
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="All Types" />
-                      </SelectTrigger>{" "}
-                      <SelectContent>
-                        <SelectItem value="all_types">All Types</SelectItem>
-                        <SelectItem value="BUG">Bug</SelectItem>
-                        <SelectItem value="FEATURE">Feature</SelectItem>
-                        <SelectItem value="TASK">Task</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/* Assigned To Filter */}
-                  <div className="space-y-2">
-                    <Label>Assigned To</Label>
-                    <Select
-                      value={filters.assignedTo}
-                      onValueChange={(value) =>
-                        handleFilterChange("assignedTo", value)
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Any User" />
-                      </SelectTrigger>{" "}
-                      <SelectContent>
-                        <SelectItem value="any_user">Any User</SelectItem>
-                        {users.map((user) => (
-                          <SelectItem key={user.id} value={user.id}>
-                            {user.username}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <Button
-                    className="w-full"
-                    variant="secondary"
-                    onClick={() => setIsFilterMenuOpen(false)}
-                  >
-                    Apply Filters
-                  </Button>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Create issue button */}
-          {user && (
-            <Dialog
-              open={isCreateDialogOpen}
-              onOpenChange={setIsCreateDialogOpen}
-            >
-              <DialogTrigger asChild>
-                <Button>Create Issue</Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[500px]">
-                <DialogHeader>
-                  <DialogTitle>Create New Issue</DialogTitle>
-                  <DialogDescription>
-                    Fill in the details to create a new issue.
-                  </DialogDescription>
-                </DialogHeader>
-                <form onSubmit={handleCreateSubmit}>
-                  <div className="grid gap-4 py-4">
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="title" className="text-right">
-                        Title *
-                      </Label>
-                      <Input
-                        id="title"
-                        name="title"
-                        value={createFormData.title}
-                        onChange={handleCreateInputChange}
-                        className="col-span-3"
-                        placeholder="Enter issue title"
-                        required
-                      />
+    <ProtectedRoute>
+      <div className="container mx-auto flex flex-col space-y-6">
+        <div className="flex flex-wrap justify-between items-center gap-2">
+          <h2 className="text-3xl font-bold text-black">Issues</h2>
+          <div className="flex flex-wrap gap-2 items-center">
+            {/* Filter button with dropdown */}
+            <div className="relative">
+              {" "}
+              <Button
+                variant="outline"
+                onClick={() => setIsFilterMenuOpen((prev) => !prev)}
+                className="flex items-center gap-2"
+              >
+                <span>Filters</span>
+                {(filters.status !== "all_statuses" ||
+                  filters.priority !== "all_priorities" ||
+                  filters.type !== "all_types" ||
+                  filters.assignedTo !== "any_user") && (
+                  <Badge variant="secondary" className="ml-1">
+                    {
+                      [
+                        filters.status !== "all_statuses",
+                        filters.priority !== "all_priorities",
+                        filters.type !== "all_types",
+                        filters.assignedTo !== "any_user",
+                      ].filter(Boolean).length
+                    }
+                  </Badge>
+                )}
+              </Button>
+              {isFilterMenuOpen && (
+                <div className="absolute right-0 mt-2 w-72 bg-white shadow-lg rounded-md border border-gray-200 p-4 z-50">
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <h4 className="font-medium">Filter Issues</h4>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={resetFilters}
+                        className="h-7 text-xs"
+                      >
+                        Reset
+                      </Button>
                     </div>
 
-                    <div className="grid grid-cols-4 items-start gap-4">
-                      <Label htmlFor="description" className="text-right mt-2">
-                        Description
-                      </Label>
-                      <Textarea
-                        id="description"
-                        name="description"
-                        value={createFormData.description}
-                        onChange={handleCreateInputChange}
-                        className="col-span-3"
-                        placeholder="Enter issue description"
-                        rows={3}
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label className="text-right">Project *</Label>
+                    {/* Status Filter */}
+                    <div className="space-y-2">
+                      <Label>Status</Label>
                       <Select
-                        value={createFormData.project_id}
+                        value={filters.status}
                         onValueChange={(value) =>
-                          handleCreateSelectChange("project_id", value)
+                          handleFilterChange("status", value)
                         }
                       >
-                        <SelectTrigger className="col-span-3">
-                          <SelectValue placeholder="Select project" />
-                        </SelectTrigger>
+                        <SelectTrigger>
+                          <SelectValue placeholder="All Statuses" />
+                        </SelectTrigger>{" "}
                         <SelectContent>
-                          {projects.map((project) => (
-                            <SelectItem key={project.id} value={project.id}>
-                              {project.title}
+                          <SelectItem value="all_statuses">
+                            All Statuses
+                          </SelectItem>
+                          {Object.keys(statusConfig).map((status) => (
+                            <SelectItem key={status} value={status}>
+                              {statusConfig[status]?.label ||
+                                status.replace(/_/g, " ")}
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
                     </div>
 
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label className="text-right">Priority</Label>
+                    {/* Priority Filter */}
+                    <div className="space-y-2">
+                      <Label>Priority</Label>
                       <Select
-                        value={createFormData.priority}
+                        value={filters.priority}
                         onValueChange={(value) =>
-                          handleCreateSelectChange("priority", value)
+                          handleFilterChange("priority", value)
                         }
                       >
-                        <SelectTrigger className="col-span-3">
-                          <SelectValue />
-                        </SelectTrigger>
+                        <SelectTrigger>
+                          <SelectValue placeholder="All Priorities" />
+                        </SelectTrigger>{" "}
                         <SelectContent>
+                          <SelectItem value="all_priorities">
+                            All Priorities
+                          </SelectItem>
                           <SelectItem value="LOW">Low</SelectItem>
                           <SelectItem value="MEDIUM">Medium</SelectItem>
                           <SelectItem value="HIGH">High</SelectItem>
@@ -996,274 +854,425 @@ const Issues = () => {
                       </Select>
                     </div>
 
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label className="text-right">Type</Label>
+                    {/* Type Filter */}
+                    <div className="space-y-2">
+                      <Label>Type</Label>
                       <Select
-                        value={createFormData.issue_type}
+                        value={filters.type}
                         onValueChange={(value) =>
-                          handleCreateSelectChange("issue_type", value)
+                          handleFilterChange("type", value)
                         }
                       >
-                        <SelectTrigger className="col-span-3">
-                          <SelectValue />
-                        </SelectTrigger>
+                        <SelectTrigger>
+                          <SelectValue placeholder="All Types" />
+                        </SelectTrigger>{" "}
                         <SelectContent>
+                          <SelectItem value="all_types">All Types</SelectItem>
                           <SelectItem value="BUG">Bug</SelectItem>
                           <SelectItem value="FEATURE">Feature</SelectItem>
                           <SelectItem value="TASK">Task</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
+
+                    {/* Assigned To Filter */}
+                    <div className="space-y-2">
+                      <Label>Assigned To</Label>
+                      <Select
+                        value={filters.assignedTo}
+                        onValueChange={(value) =>
+                          handleFilterChange("assignedTo", value)
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Any User" />
+                        </SelectTrigger>{" "}
+                        <SelectContent>
+                          <SelectItem value="any_user">Any User</SelectItem>
+                          {users.map((user) => (
+                            <SelectItem key={user.id} value={user.id}>
+                              {user.username}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <Button
+                      className="w-full"
+                      variant="secondary"
+                      onClick={() => setIsFilterMenuOpen(false)}
+                    >
+                      Apply Filters
+                    </Button>
                   </div>
-                  <DialogFooter>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => {
-                        setIsCreateDialogOpen(false);
-                        resetCreateForm();
-                      }}
-                      disabled={isCreating}
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      type="submit"
-                      disabled={
-                        isCreating ||
-                        !createFormData.title.trim() ||
-                        !createFormData.project_id
-                      }
-                    >
-                      {isCreating ? "Creating..." : "Create Issue"}
-                    </Button>
-                  </DialogFooter>
-                </form>
-              </DialogContent>
-            </Dialog>
-          )}
-        </div>{" "}
-      </div>
-      {/* Display active filters - only when actual filters are applied */}
-      {(filters.status !== "all_statuses" ||
-        filters.priority !== "all_priorities" ||
-        filters.type !== "all_types" ||
-        filters.assignedTo !== "any_user") && (
-        <div className="flex flex-wrap gap-2 items-center">
-          <span className="text-sm text-gray-500">Active filters:</span>
-          {filters.status !== "all_statuses" && (
-            <Badge variant="outline" className="flex items-center gap-1">
-              {" "}
-              Status: {statusConfig[filters.status]?.label || filters.status}
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-4 w-4 p-0 ml-1"
-                onClick={() => handleFilterChange("status", "all_statuses")}
+                </div>
+              )}
+            </div>
+
+            {/* Create issue button */}
+            {user && (
+              <Dialog
+                open={isCreateDialogOpen}
+                onOpenChange={setIsCreateDialogOpen}
               >
-                ×
-              </Button>
-            </Badge>
-          )}
-          {filters.priority !== "all_priorities" && (
-            <Badge variant="outline" className="flex items-center gap-1">
-              {" "}
-              Priority: {filters.priority}
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-4 w-4 p-0 ml-1"
-                onClick={() => handleFilterChange("priority", "all_priorities")}
-              >
-                ×
-              </Button>
-            </Badge>
-          )}
-          {filters.type !== "all_types" && (
-            <Badge variant="outline" className="flex items-center gap-1">
-              {" "}
-              Type: {typeConfig[filters.type]?.label || filters.type}
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-4 w-4 p-0 ml-1"
-                onClick={() => handleFilterChange("type", "all_types")}
-              >
-                ×
-              </Button>
-            </Badge>
-          )}
-          {filters.assignedTo !== "any_user" && (
-            <Badge variant="outline" className="flex items-center gap-1">
-              {" "}
-              Assigned to:{" "}
-              {users.find((u) => u.id === filters.assignedTo)?.username ||
-                "User"}
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-4 w-4 p-0 ml-1"
-                onClick={() => handleFilterChange("assignedTo", "any_user")}
-              >
-                ×
-              </Button>
-            </Badge>
-          )}
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-xs"
-            onClick={resetFilters}
-          >
-            Clear all
-          </Button>
+                <DialogTrigger asChild>
+                  <Button>Create Issue</Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[500px]">
+                  <DialogHeader>
+                    <DialogTitle>Create New Issue</DialogTitle>
+                    <DialogDescription>
+                      Fill in the details to create a new issue.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <form onSubmit={handleCreateSubmit}>
+                    <div className="grid gap-4 py-4">
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="title" className="text-right">
+                          Title *
+                        </Label>
+                        <Input
+                          id="title"
+                          name="title"
+                          value={createFormData.title}
+                          onChange={handleCreateInputChange}
+                          className="col-span-3"
+                          placeholder="Enter issue title"
+                          required
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-4 items-start gap-4">
+                        <Label
+                          htmlFor="description"
+                          className="text-right mt-2"
+                        >
+                          Description
+                        </Label>
+                        <Textarea
+                          id="description"
+                          name="description"
+                          value={createFormData.description}
+                          onChange={handleCreateInputChange}
+                          className="col-span-3"
+                          placeholder="Enter issue description"
+                          rows={3}
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label className="text-right">Project *</Label>
+                        <Select
+                          value={createFormData.project_id}
+                          onValueChange={(value) =>
+                            handleCreateSelectChange("project_id", value)
+                          }
+                        >
+                          <SelectTrigger className="col-span-3">
+                            <SelectValue placeholder="Select project" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {projects.map((project) => (
+                              <SelectItem key={project.id} value={project.id}>
+                                {project.title}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label className="text-right">Priority</Label>
+                        <Select
+                          value={createFormData.priority}
+                          onValueChange={(value) =>
+                            handleCreateSelectChange("priority", value)
+                          }
+                        >
+                          <SelectTrigger className="col-span-3">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="LOW">Low</SelectItem>
+                            <SelectItem value="MEDIUM">Medium</SelectItem>
+                            <SelectItem value="HIGH">High</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label className="text-right">Type</Label>
+                        <Select
+                          value={createFormData.issue_type}
+                          onValueChange={(value) =>
+                            handleCreateSelectChange("issue_type", value)
+                          }
+                        >
+                          <SelectTrigger className="col-span-3">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="BUG">Bug</SelectItem>
+                            <SelectItem value="FEATURE">Feature</SelectItem>
+                            <SelectItem value="TASK">Task</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => {
+                          setIsCreateDialogOpen(false);
+                          resetCreateForm();
+                        }}
+                        disabled={isCreating}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        type="submit"
+                        disabled={
+                          isCreating ||
+                          !createFormData.title.trim() ||
+                          !createFormData.project_id
+                        }
+                      >
+                        {isCreating ? "Creating..." : "Create Issue"}
+                      </Button>
+                    </DialogFooter>
+                  </form>
+                </DialogContent>
+              </Dialog>
+            )}
+          </div>{" "}
         </div>
-      )}
-      {/* Assign Issue Dialog */}
-      <Dialog open={isAssignDialogOpen} onOpenChange={setIsAssignDialogOpen}>
-        <DialogContent className="sm:max-w-[400px]">
-          <DialogHeader>
-            <DialogTitle>Assign Issue</DialogTitle>
-            <DialogDescription>
-              Assign "{selectedIssue?.title}" to a user.
-            </DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleAssignSubmit}>
-            {" "}
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label className="text-right">Assign To *</Label>
-                <Select
-                  value={assignFormData.assigned_to_id}
-                  onValueChange={(value) =>
-                    setAssignFormData({ assigned_to_id: value })
+        {/* Display active filters - only when actual filters are applied */}
+        {(filters.status !== "all_statuses" ||
+          filters.priority !== "all_priorities" ||
+          filters.type !== "all_types" ||
+          filters.assignedTo !== "any_user") && (
+          <div className="flex flex-wrap gap-2 items-center">
+            <span className="text-sm text-gray-500">Active filters:</span>
+            {filters.status !== "all_statuses" && (
+              <Badge variant="outline" className="flex items-center gap-1">
+                {" "}
+                Status: {statusConfig[filters.status]?.label || filters.status}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-4 w-4 p-0 ml-1"
+                  onClick={() => handleFilterChange("status", "all_statuses")}
+                >
+                  ×
+                </Button>
+              </Badge>
+            )}
+            {filters.priority !== "all_priorities" && (
+              <Badge variant="outline" className="flex items-center gap-1">
+                {" "}
+                Priority: {filters.priority}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-4 w-4 p-0 ml-1"
+                  onClick={() =>
+                    handleFilterChange("priority", "all_priorities")
                   }
                 >
-                  <SelectTrigger className="col-span-3">
-                    <SelectValue placeholder="Select user" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {users.map((user) => (
-                      <SelectItem key={user.id} value={user.id}>
-                        {user.username} ({user.role}: {user.id.substring(0, 5)})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  ×
+                </Button>
+              </Badge>
+            )}
+            {filters.type !== "all_types" && (
+              <Badge variant="outline" className="flex items-center gap-1">
+                {" "}
+                Type: {typeConfig[filters.type]?.label || filters.type}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-4 w-4 p-0 ml-1"
+                  onClick={() => handleFilterChange("type", "all_types")}
+                >
+                  ×
+                </Button>
+              </Badge>
+            )}
+            {filters.assignedTo !== "any_user" && (
+              <Badge variant="outline" className="flex items-center gap-1">
+                {" "}
+                Assigned to:{" "}
+                {users.find((u) => u.id === filters.assignedTo)?.username ||
+                  "User"}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-4 w-4 p-0 ml-1"
+                  onClick={() => handleFilterChange("assignedTo", "any_user")}
+                >
+                  ×
+                </Button>
+              </Badge>
+            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-xs"
+              onClick={resetFilters}
+            >
+              Clear all
+            </Button>
+          </div>
+        )}
+        {/* Assign Issue Dialog */}
+        <Dialog open={isAssignDialogOpen} onOpenChange={setIsAssignDialogOpen}>
+          <DialogContent className="sm:max-w-[400px]">
+            <DialogHeader>
+              <DialogTitle>Assign Issue</DialogTitle>
+              <DialogDescription>
+                Assign "{selectedIssue?.title}" to a user.
+              </DialogDescription>
+            </DialogHeader>
+            <form onSubmit={handleAssignSubmit}>
+              {" "}
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label className="text-right">Assign To *</Label>
+                  <Select
+                    value={assignFormData.assigned_to_id}
+                    onValueChange={(value) =>
+                      setAssignFormData({ assigned_to_id: value })
+                    }
+                  >
+                    <SelectTrigger className="col-span-3">
+                      <SelectValue placeholder="Select user" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {users.map((user) => (
+                        <SelectItem key={user.id} value={user.id}>
+                          {user.username} ({user.role}:{" "}
+                          {user.id.substring(0, 5)})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-            </div>
-            <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => {
-                  setIsAssignDialogOpen(false);
-                  setSelectedIssue(null);
-                  resetAssignForm();
-                }}
-                disabled={isAssigning}
-              >
-                Cancel
-              </Button>{" "}
-              <Button
-                type="submit"
-                disabled={isAssigning || !assignFormData.assigned_to_id}
-              >
-                {isAssigning ? "Assigning..." : "Assign Issue"}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>{" "}
-      {/* Issues Tabs */}
-      <Tabs defaultValue="all" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="all">
-            All Issues ({filteredAllIssues.length})
-          </TabsTrigger>
-          {user?.role === "PM" && (
-            <TabsTrigger value="assigned">
-              Assigned to Me ({filteredMyIssues.length})
+              <DialogFooter>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setIsAssignDialogOpen(false);
+                    setSelectedIssue(null);
+                    resetAssignForm();
+                  }}
+                  disabled={isAssigning}
+                >
+                  Cancel
+                </Button>{" "}
+                <Button
+                  type="submit"
+                  disabled={isAssigning || !assignFormData.assigned_to_id}
+                >
+                  {isAssigning ? "Assigning..." : "Assign Issue"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>{" "}
+        {/* Issues Tabs */}
+        <Tabs defaultValue="all" className="w-full">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="all">
+              All Issues ({filteredAllIssues.length})
             </TabsTrigger>
-          )}
-          <TabsTrigger value="created">
-            Created by Me ({filteredCreatedByMeIssues.length})
-          </TabsTrigger>
-          <TabsTrigger value="completed">
-            {user?.role === "PM" ? "Completed Issues" : "Review & Completed"} (
-            {filteredCompletedIssues.length})
-          </TabsTrigger>
-        </TabsList>
-        <TabsContent value="all" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredAllIssues.map((issue) => (
-              <IssueCard
-                key={issue.id}
-                issue={issue}
-                showAssignButton={user?.role === "PM"}
-              />
-            ))}
-          </div>
-          {filteredAllIssues.length === 0 && (
-            <div className="text-center py-8 text-gray-500">
-              {allIssues.length === 0
-                ? "No issues found. Create your first issue!"
-                : "No issues match the selected filters."}
+            {user?.role === "PM" && (
+              <TabsTrigger value="assigned">
+                Assigned to Me ({filteredMyIssues.length})
+              </TabsTrigger>
+            )}
+            <TabsTrigger value="created">
+              Created by Me ({filteredCreatedByMeIssues.length})
+            </TabsTrigger>
+            <TabsTrigger value="completed">
+              {user?.role === "PM" ? "Completed Issues" : "Review & Completed"}{" "}
+              ({filteredCompletedIssues.length})
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="all" className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredAllIssues.map((issue) => (
+                <IssueCard
+                  key={issue.id}
+                  issue={issue}
+                  showAssignButton={user?.role === "PM"}
+                />
+              ))}
             </div>
-          )}
-        </TabsContent>
-        <TabsContent value="assigned" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredMyIssues.map((issue) => (
-              <IssueCard key={issue.id} issue={issue} />
-            ))}
-          </div>
-          {filteredMyIssues.length === 0 && (
-            <div className="text-center py-8 text-gray-500">
-              {myIssues.length === 0
-                ? "No issues assigned to you yet."
-                : "No assigned issues match the selected filters."}
+            {filteredAllIssues.length === 0 && (
+              <div className="text-center py-8 text-gray-500">
+                {allIssues.length === 0
+                  ? "No issues found. Create your first issue!"
+                  : "No issues match the selected filters."}
+              </div>
+            )}
+          </TabsContent>
+          <TabsContent value="assigned" className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredMyIssues.map((issue) => (
+                <IssueCard key={issue.id} issue={issue} />
+              ))}
             </div>
-          )}
-        </TabsContent>
-        <TabsContent value="created" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredCreatedByMeIssues.map((issue) => (
-              <IssueCard
-                key={issue.id}
-                issue={issue}
-                showAssignButton={user?.role === "PM"}
-              />
-            ))}
-          </div>
-          {filteredCreatedByMeIssues.length === 0 && (
-            <div className="text-center py-8 text-gray-500">
-              {createdByMeIssues.length === 0
-                ? "No issues created by you yet."
-                : "No created issues match the selected filters."}
+            {filteredMyIssues.length === 0 && (
+              <div className="text-center py-8 text-gray-500">
+                {myIssues.length === 0
+                  ? "No issues assigned to you yet."
+                  : "No assigned issues match the selected filters."}
+              </div>
+            )}
+          </TabsContent>
+          <TabsContent value="created" className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredCreatedByMeIssues.map((issue) => (
+                <IssueCard
+                  key={issue.id}
+                  issue={issue}
+                  showAssignButton={user?.role === "PM"}
+                />
+              ))}
             </div>
-          )}
-        </TabsContent>
-        <TabsContent value="completed" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredCompletedIssues.map((issue) => (
-              <IssueCard
-                key={issue.id}
-                issue={issue}
-                showAssignButton={false}
-              />
-            ))}
-          </div>
-          {filteredCompletedIssues.length === 0 && (
-            <div className="text-center py-8 text-gray-500">
-              {completedIssues.length === 0
-                ? "No completed issues found."
-                : "No completed issues match the selected filters."}
+            {filteredCreatedByMeIssues.length === 0 && (
+              <div className="text-center py-8 text-gray-500">
+                {createdByMeIssues.length === 0
+                  ? "No issues created by you yet."
+                  : "No created issues match the selected filters."}
+              </div>
+            )}
+          </TabsContent>
+          <TabsContent value="completed" className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredCompletedIssues.map((issue) => (
+                <IssueCard
+                  key={issue.id}
+                  issue={issue}
+                  showAssignButton={false}
+                />
+              ))}
             </div>
-          )}
-        </TabsContent>
-      </Tabs>
-    </div>
+            {filteredCompletedIssues.length === 0 && (
+              <div className="text-center py-8 text-gray-500">
+                {completedIssues.length === 0
+                  ? "No completed issues found."
+                  : "No completed issues match the selected filters."}
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
+      </div>
+    </ProtectedRoute>
   );
 };
 

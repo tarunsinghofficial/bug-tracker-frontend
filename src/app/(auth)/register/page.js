@@ -33,20 +33,28 @@ import {
 import { useAuth } from "@/lib/authContext";
 import { useToast } from "@/hooks/use-toast";
 
-const formSchema = z.object({
-  username: z.string().min(3, {
-    message: "Username must be at least 3 characters.",
-  }),
-  email: z.string().email({
-    message: "Please enter a valid email address.",
-  }),
-  role: z.enum(["PM", "Developer", "Designer"], {
-    message: "Please select a valid role.",
-  }),
-  password: z.string().min(8, {
-    message: "Password must be at least 8 characters.",
-  }),
-});
+const formSchema = z
+  .object({
+    username: z.string().min(3, {
+      message: "Username must be at least 3 characters.",
+    }),
+    email: z.string().email({
+      message: "Please enter a valid email address.",
+    }),
+    role: z.enum(["PM", "Developer", "Designer"], {
+      message: "Please select a valid role.",
+    }),
+    password: z.string().min(8, {
+      message: "Password must be at least 8 characters.",
+    }),
+    confirm_password: z.string().min(8, {
+      message: "Confirm Password must be at least 8 characters.",
+    }),
+  })
+  .refine((data) => data.password === data.confirm_password, {
+    message: "Passwords don't match.",
+    path: ["confirm_password"],
+  });
 
 const Register = () => {
   const router = useRouter();
@@ -59,6 +67,7 @@ const Register = () => {
       username: "",
       email: "",
       password: "",
+      confirm_password: "",
     },
   });
 
@@ -71,6 +80,7 @@ const Register = () => {
         email: values.email,
         role: values.role,
         password: values.password,
+        confirm_password: values.confirm_password,
       });
 
       toast({
@@ -124,7 +134,7 @@ const Register = () => {
           <CardHeader>
             <CardTitle className="text-2xl">Create an Account</CardTitle>
             <CardDescription>
-              Enter your details to register for Bug Tracker
+              Enter your details to register for ProjectSync
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -189,6 +199,23 @@ const Register = () => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          placeholder="••••••••"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="confirm_password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Confirm Password</FormLabel>
                       <FormControl>
                         <Input
                           type="password"

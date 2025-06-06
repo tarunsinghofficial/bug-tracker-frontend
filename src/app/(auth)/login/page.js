@@ -63,7 +63,7 @@ const Login = () => {
 
       toast({
         title: "Login successful",
-        description: "Welcome back to Bug Tracker!",
+        description: "Welcome back to ProjectSync!",
         variant: "success",
       });
 
