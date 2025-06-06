@@ -37,7 +37,8 @@ export const authAPI = {
       });
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.message || "Login failed");
+        const errorDetail = data.detail || data.message || "Login failed";
+        throw new Error(errorDetail);
       }
       return data;
     } catch (error) {
@@ -46,23 +47,44 @@ export const authAPI = {
     }
   },
 
-  getCurrentUser: async (token) => {
+  getCurrentUser: async () => {
     try {
       const res = await fetch(`${API_BASE_URL}/api/v1/auth/me`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         credentials: "include",
       });
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.message || "Failed to fetch current user");
+        const errorDetail =
+          data.detail || data.message || "Failed to fetch current user";
+        throw new Error(errorDetail);
       }
       return data;
     } catch (error) {
       console.error("Get current user error:", error);
+      throw error;
+    }
+  },
+
+  logout: async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/v1/auth/logout`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+      if (!res.ok) {
+        const errorDetail = data.detail || data.message || "Logout failed";
+        throw new Error(errorDetail);
+      }
+      return { success: true };
+    } catch (error) {
+      console.error("Logout error:", error);
       throw error;
     }
   },

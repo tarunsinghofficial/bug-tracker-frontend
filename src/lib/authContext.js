@@ -14,34 +14,40 @@ export const AuthProvider = ({ children }) => {
   const router = useRouter();
   const { toast } = useToast();
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (token) {
-          const data = await authAPI.getCurrentUser(token);
-          setUser(data);
-        }
-      } catch (error) {
-        console.error("Auth check failed:", error);
-        localStorage.removeItem("token");
-        setUser(null);
-        const errorMsg =
-          error.message || "Session Expired. Please log in again.";
-        const detailedError =
-          error.message && error.message.detail
-            ? error.message.detail
-            : errorMsg;
+  const checkAuth = async () => {
+    setLoading(true); // Set loading when checking auth
+    try {
+      // Call the /me endpoint to check if the user is authenticated via cookie
+      // The browser will automatically send the HttpOnly cookie
+      const data = await authAPI.getCurrentUser();
+      setUser(data);
+      setError(null); // Clear any previous errors on successful auth
+    } catch (error) {
+      console.error("Auth check failed:", error);
+      setUser(null);
+      // Only set error state or show toast for actual authentication failures,
+      // not just when no cookie exists on initial load for public routes.
+      // We might need a more specific error handling based on backend response.
+      const errorMsg = error.message || "Session Expired. Please log in again.";
+      setError(errorMsg);
+      if (
+        !error.message?.includes("Failed to fetch") &&
+        !error.message?.includes("Failed to fetch current user") &&
+        error.message !== "Could not validate credentials"
+      ) {
+        // Refined check to prevent toast on initial load or expected unauthenticated state
         toast({
           title: "Session Expired",
-          description: detailedError,
+          description: errorMsg,
           variant: "destructive",
         });
-      } finally {
-        setLoading(false);
       }
-    };
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     checkAuth();
   }, [toast]);
 
@@ -77,19 +83,23 @@ export const AuthProvider = ({ children }) => {
   const login = async (credentials) => {
     setLoading(true);
     try {
+      // Make the login API call (backend sets HttpOnly cookie)
       const data = await authAPI.login(credentials);
-      if (data.access_token) {
-        localStorage.setItem("token", data.access_token);
-        setUser(data.user);
-        toast({
-          title: "Success",
-          description: "Logged in successfully",
-          variant: "success",
-        });
-        router.push("/dashboard");
-      } else {
-        throw new Error("Login successful but no access token received");
-      }
+
+      // Add a small delay before checking auth to ensure cookie is set/available
+      // This is a potential workaround; the root cause might be backend/cookie settings.
+      await new Promise((resolve) => setTimeout(resolve, 100)); // 100ms delay
+
+      // After successful login, check auth status (should read cookie)
+      await checkAuth();
+
+      toast({
+        title: "Success",
+        description: "Logged in successfully",
+        variant: "success",
+      });
+      // The middleware should handle the redirect based on the cookie now
+      // router.push("/dashboard"); // Removed direct push, middleware should handle
       return data;
     } catch (error) {
       console.error("Login error:", error);
@@ -109,15 +119,30 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem("token");
-    toast({
-      title: "Logged out",
-      description: "You have been logged out successfully",
-      variant: "default",
-    });
-    router.push("/");
+  const logout = async () => {
+    setLoading(true); // Set loading on logout
+    try {
+      // Call backend endpoint to clear HttpOnly cookie
+      await authAPI.logout();
+      setUser(null);
+      setError(null); // Clear errors on logout
+      toast({
+        title: "Logged out",
+        description: "You have been logged out successfully",
+        variant: "default",
+      });
+      router.push("/"); // Redirect to home or login after logout
+    } catch (error) {
+      console.error("Logout error:", error);
+      setError("An error occurred during logout.");
+      toast({
+        title: "Logout Failed",
+        description: "An error occurred during logout.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
