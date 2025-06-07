@@ -36,6 +36,7 @@ import {
 } from "lucide-react";
 
 import ProtectedRoute from "@/components/ProtectedRoute";
+import { useToast } from "@/hooks/use-toast";
 
 const Projects = () => {
   const [allProjects, setAllProjects] = useState([]);
@@ -48,6 +49,7 @@ const Projects = () => {
     is_active: true,
   });
   const { user } = useAuth();
+  const { toast } = useToast();
 
   // API Functions
   const getAuthHeaders = () => {
@@ -69,7 +71,12 @@ const Projects = () => {
 
       if (!res.ok) {
         const errorData = await res.json();
-        console.error("Failed to fetch projects:", errorData);
+        const detailedError = errorData.detail;
+        toast({
+          title: "Error fetching Projects",
+          description: detailedError,
+          variant: "destructive",
+        });
         throw new Error(errorData.detail || "Failed to fetch projects");
       }
 
@@ -95,6 +102,12 @@ const Projects = () => {
       setMyProjects(userProjects);
       return userProjects;
     } catch (error) {
+      const detailedError = error.detail;
+      toast({
+        title: "Error fetching Projects",
+        description: detailedError,
+        variant: "destructive",
+      });
       console.error("Error fetching my projects:", error);
       return [];
     }
@@ -114,7 +127,12 @@ const Projects = () => {
 
       if (!res.ok) {
         const errorData = await res.json();
-        console.error("Failed to create project:", errorData);
+        const detailedError = errorData.detail;
+        toast({
+          title: "Project Creation Failed",
+          description: detailedError,
+          variant: "destructive",
+        });
         throw new Error(errorData.detail || "Failed to create project");
       }
 

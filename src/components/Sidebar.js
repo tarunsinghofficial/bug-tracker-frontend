@@ -61,7 +61,7 @@ const Sidebar = () => {
     >
       {/* Collapse Button */}
       <div className="p-4 border-b flex items-center justify-between">
-        {!isCollapsed && <span className="text-lg font-bold">ProjectSync</span>}
+        {!isCollapsed && <span className="text-lg font-bold">Welcome</span>}
         <Button
           variant="ghost"
           size="icon"

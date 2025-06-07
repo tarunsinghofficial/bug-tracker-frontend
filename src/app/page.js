@@ -16,18 +16,18 @@ export default function Home() {
       <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between min-h-screen px-6 lg:px-20 gap-16">
         {/* Left Content */}
         <div className="flex-1 w-full lg:w-1/2 flex flex-col justify-center items-start text-left py-12">
-          <div className="bg-gray-900 text-white px-4 py-1 rounded-full text-sm font-medium mb-4">
+          <div className="bg-gray-900 text-white px-4 py-1 border-[1px] border-blue-600/50 rounded-full text-sm font-medium mb-4">
             ProjectSync
           </div>
 
           <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight leading-tight mb-6">
-            Manage your <span className="text-blue-600">Project</span> and{" "}
+            Manage your <span className="text-blue-600">Projects</span> and{" "}
             <span className="text-purple-600">Issues</span> seamlessly
           </h1>
 
           <p className="text-lg md:text-xl text-gray-200 mb-8 max-w-2xl">
             Streamline your development workflow and manage your team’s projects
-            and bugs more efficiently with our powerful tool.
+            and issues more efficiently with our powerful tool.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4">
@@ -37,7 +37,7 @@ export default function Home() {
                 <span className="text-white font-bold">{user?.username}</span>!
               </h2>
             ) : (
-              <Link href="/dashboard" passHref>
+              <Link href="/register" passHref>
                 <Button className="px-8 py-3 text-lg font-semibold rounded-full bg-blue-600 hover:bg-blue-700 transition-colors">
                   Get Started
                 </Button>
@@ -66,7 +66,7 @@ export default function Home() {
         </div>
 
         {/* Right Hero Image */}
-        <div className="w-full lg:w-1/2 flex justify-center items-center h-[300px] lg:h-[80vh] overflow-hidden rounded-xl shadow-xl">
+        <div className="w-full lg:w-1/2 flex justify-end items-center h-[300px] lg:h-[80vh] overflow-hidden rounded-xl shadow-xl mt-8 lg:mt-0">
           <Image
             src={Hero}
             alt="ProjectSync - Project and Issue Management Tool"

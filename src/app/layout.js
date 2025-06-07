@@ -1,9 +1,7 @@
 import { Roboto_Mono } from "next/font/google";
 import "./globals.css";
-import Sidebar from "@/components/Sidebar";
 import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import { AuthProvider } from "@/lib/authContext";
+import { AuthProvider, useAuth } from "@/lib/authContext";
 import { Toaster } from "@/components/ui/toaster";
 
 const roboto = Roboto_Mono({
@@ -24,7 +22,8 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={`${roboto.variable} w-full`}>
         <AuthProvider>
-          {children}
+          <Navbar />
+          <main className="relative z-10">{children}</main>
           <Toaster />
         </AuthProvider>
       </body>

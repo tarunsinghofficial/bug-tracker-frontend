@@ -97,13 +97,13 @@ const Register = () => {
 
       toast({
         title: "Registration failed",
-        description: error.message || "Registration failed. Please try again.",
+        description: error.detail || "Registration failed. Please try again.",
         variant: "destructive",
       });
 
       form.setError("root", {
         type: "manual",
-        message: error.message || "Registration failed. Please try again.",
+        message: error.detail || "Registration failed. Please try again.",
       });
     }
   }

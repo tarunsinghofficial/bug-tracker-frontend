@@ -14,8 +14,11 @@ export const authAPI = {
         body: JSON.stringify(userData),
       });
       const data = await res.json();
+
+      const detailedError = data.error;
+      console.log(data, detailedError);
       if (!res.ok) {
-        throw new Error(data.message || "Registration failed");
+        throw new Error(data.error.detail || "Registration failed");
       }
       return data;
     } catch (error) {
