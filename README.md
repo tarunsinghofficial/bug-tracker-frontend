@@ -98,6 +98,10 @@ This project is built with the following key technologies:
 -   **Frontend:** Vercel
 -   **Backend:** Render (using Render for deployment)
 
+# Developed By:
+- **Tarun Singh** (Frontend)
+- [**Tushar Aggarwal**](https://github.com/Tushar822/Bug-Tracker-backend) (Backend)
+
 ## Contributing (Conceptual)
 
 Contributions are welcome! Please feel free to open issues or submit pull requests.
